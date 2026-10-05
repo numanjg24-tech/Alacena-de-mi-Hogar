@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<meta name="description" content="Control sencillo de la alacena del hogar">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<title>Alacena de mi hogar</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#172033;background:#f5f7fb}
+*{box-sizing:border-box}body{margin:0}.app{max-width:720px;margin:auto;padding:16px}
+h1{font-size:24px;margin:4px 0}.sub{color:#667085;font-size:14px;margin:0 0 16px}
+.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+button,input,select{font:inherit}button{cursor:pointer}
+.tab,.card,.form{background:white;border:1px solid #e4e7ec;border-radius:14px}
+.tab{padding:12px;font-weight:700;border-color:#d0d5dd}.tab.active{background:#eaf2ff;border-color:#2563eb}
+.panel{display:none}.panel.active{display:block}.form{padding:14px;margin-bottom:12px}
+input,select{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;margin:5px 0 10px;background:white}
+.primary{background:#2563eb;color:white;border:0;border-radius:10px;padding:12px 16px;font-weight:700;width:100%}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:white;border:1px solid #e4e7ec;border-radius:12px;margin:8px 0}
+.muted{color:#667085;font-size:14px}.total{font-size:32px;font-weight:800;padding:18px;background:white;border-radius:14px;border:1px solid #e4e7ec}
+.smallbtn{background:none;border:0;text-decoration:underline;color:#475467}.empty{text-align:center;padding:28px;color:#667085}
+@media(min-width:560px){.tabs{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>🧺 Alacena de mi hogar</h1><p class="sub">Control sencillo de productos, compras y gastos.</p>
+<nav class="tabs">
+<button class="tab active" data-tab="inv">📦<br>Inventario</button>
+<button class="tab" data-tab="buy">🛒<br>Agregar compra</button>
+<button class="tab" data-tab="list">📝<br>Lista del súper</button>
+<button class="tab" data-tab="exp">💰<br>Gastos del mes</button>
+</nav>
+
+<section id="inv" class="panel active"><h2>Inventario</h2><p class="muted">Lo que tienes actualmente en casa.</p><div id="inventory"></div></section>
+
+<section id="buy" class="panel"><h2>Agregar compra</h2>
+<form id="purchase" class="form">
+<label>Producto<input id="name" required placeholder="Ej. arroz"></label>
+<label>Cantidad<input id="qty" type="number" min=".01" step=".01" required placeholder="Ej. 2"></label>
+<label>Precio total (C$)<input id="price" type="number" min="0" step=".01" required placeholder="Ej. 120"></label>
+<label>Categoría<select id="cat"><option>Alimentos</option><option>Bebidas</option><option>Limpieza</option><option>Higiene</option><option>Otros</option></select></label>
+<button class="primary">Guardar compra</button></form></section>
+
+<section id="list" class="panel"><h2>Lista del súper</h2>
+<form id="shopping" class="form"><input id="needed" required placeholder="¿Qué necesitas comprar?"><button class="primary">Agregar a la lista</button></form>
+<div id="shoppingList"></div></section>
+
+<section id="exp" class="panel"><h2>Gastos del mes</h2><div class="total" id="total">C$0.00</div><div id="expenses"></div></section>
+<p id="msg" class="muted" aria-live="polite"></p>
+<button id="clear" class="smallbtn">Borrar todos los datos</button>
+</main>
+<script>
+const KEY="alacena_hogar_v1";let d=JSON.parse(localStorage.getItem(KEY)||'{"inventory":[],"purchases":[],"shopping":[]}');
+const $=s=>document.querySelector(s), save=()=>localStorage.setItem(KEY,JSON.stringify(d));
+const money=n=>"C$"+Number(n).toLocaleString("es-NI",{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function render(){
+ $("#inventory").innerHTML=d.inventory.length?d.inventory.map((x,i)=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.cat)} · ${x.qty} unidades</div></div><button class="smallbtn" onclick="useOne(${i})">Usar 1</button></div>`).join(""):'<div class="empty">No hay productos. Agrega una compra.</div>';
+ $("#shoppingList").innerHTML=d.shopping.length?d.shopping.map((x,i)=>`<div class="row"><label><input type="checkbox" onchange="done(${i})"> ${esc(x)}</label><button class="smallbtn" onclick="delItem(${i})">Eliminar</button></div>`).join(""):'<div class="empty">Tu lista está vacía.</div>';
+ const now=new Date(), m=now.getMonth(),y=now.getFullYear(), ps=d.purchases.filter(p=>{let x=new Date(p.date);return x.getMonth()==m&&x.getFullYear()==y});
+ $("#total").textContent=money(ps.reduce((a,p)=>a+p.price,0));
+ $("#expenses").innerHTML=ps.length?ps.slice().reverse().map(p=>`<div class="row"><div><b>${esc(p.name)}</b><div class="muted">${p.qty} unidades · ${esc(p.cat)}</div></div><b>${money(p.price)}</b></div>`).join(""):'<div class="empty">No hay compras registradas este mes.</div>';
+}
+function useOne(i){d.inventory[i].qty=Math.max(0,d.inventory[i].qty-1);save();render()}
+function done(i){d.shopping.splice(i,1);save();render()}
+function delItem(i){d.shopping.splice(i,1);save();render()}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("#"+b.dataset.tab).classList.add("active")});
+$("#purchase").onsubmit=e=>{e.preventDefault();let name=$("#name").value.trim(),qty=+$("#qty").value,price=+$("#price").value,cat=$("#cat").value;let x=d.inventory.find(a=>a.name.toLowerCase()==name.toLowerCase());if(x){x.qty+=qty;x.cat=cat}else d.inventory.push({name,qty,cat});d.purchases.push({name,qty,price,cat,date:new Date().toISOString()});save();e.target.reset();render();msg("Compra guardada ✓")};
+$("#shopping").onsubmit=e=>{e.preventDefault();d.shopping.push($("#needed").value.trim());save();e.target.reset();render();msg("Agregado ✓")};
+$("#clear").onclick=()=>{if(confirm("¿Borrar todo?")){d={inventory:[],purchases:[],shopping:[]};save();render()}};
+function msg(t){$("#msg").textContent=t;setTimeout(()=>$("#msg").textContent="",1600)}
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+render();
+</script>
+</body></html>
