@@ -1,21 +1,29 @@
 {
   "name": "Alacena de mi hogar",
   "short_name": "Alacena",
-  "start_url": "./",
+  "id": "/Alacena-de-mi-hogar/",
+  "start_url": "/Alacena-de-mi-hogar/",
+  "scope": "/Alacena-de-mi-hogar/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
   "background_color": "#f5f7fb",
   "theme_color": "#2563eb",
-  "lang": "es",
+  "description": "Control sencillo de productos, compras, lista del súper y gastos del hogar.",
+  "lang": "es-NI",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

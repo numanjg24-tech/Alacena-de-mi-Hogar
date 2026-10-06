@@ -1,79 +1,148 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-NI">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<meta name="description" content="Control sencillo de la alacena del hogar">
+<meta name="description" content="Control inteligente de productos, compras, listas y gastos del hogar.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <title>Alacena de mi hogar</title>
 <style>
-:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#172033;background:#f5f7fb}
-*{box-sizing:border-box}body{margin:0}.app{max-width:720px;margin:auto;padding:16px}
-h1{font-size:24px;margin:4px 0}.sub{color:#667085;font-size:14px;margin:0 0 16px}
-.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
-button,input,select{font:inherit}button{cursor:pointer}
-.tab,.card,.form{background:white;border:1px solid #e4e7ec;border-radius:14px}
-.tab{padding:12px;font-weight:700;border-color:#d0d5dd}.tab.active{background:#eaf2ff;border-color:#2563eb}
-.panel{display:none}.panel.active{display:block}.form{padding:14px;margin-bottom:12px}
-input,select{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;margin:5px 0 10px;background:white}
-.primary{background:#2563eb;color:white;border:0;border-radius:10px;padding:12px 16px;font-weight:700;width:100%}
-.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:white;border:1px solid #e4e7ec;border-radius:12px;margin:8px 0}
-.muted{color:#667085;font-size:14px}.total{font-size:32px;font-weight:800;padding:18px;background:white;border-radius:14px;border:1px solid #e4e7ec}
-.smallbtn{background:none;border:0;text-decoration:underline;color:#475467}.empty{text-align:center;padding:28px;color:#667085}
-@media(min-width:560px){.tabs{grid-template-columns:repeat(4,1fr)}}
+:root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f5f7fb;--blue:#2563eb;--blue2:#1d4ed8;--green:#16a34a;--red:#dc2626;--border:#e4e7ec;--muted:#667085;--card:#fff;--soft:#eff6ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#f8faff 0,#f5f7fb 45%,#eef2f7 100%)}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:920px;margin:auto;padding:14px 14px 42px}
+header{padding:8px 2px 14px}.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand h1{font-size:25px;margin:0;letter-spacing:-.4px}.sub{color:var(--muted);font-size:14px;margin:4px 0 0}.badge{background:#eaf2ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800;white-space:nowrap}
+.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 16px}.tab{border:1px solid var(--border);background:#fff;color:#344054;border-radius:14px;padding:11px 8px;font-weight:800;box-shadow:0 2px 8px #10182808}.tab.active{background:#eaf2ff;color:#1d4ed8;border-color:#93c5fd}.panel{display:none}.panel.active{display:block}.grid2{display:grid;grid-template-columns:1fr;gap:12px}.card,.form,.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 3px 14px #10182808}.card,.form{padding:15px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}.section-title h2,.section-title h3{margin:0}.muted{color:var(--muted);font-size:13px}.label{display:block;font-size:12px;font-weight:800;color:#475467;margin-bottom:4px}.input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d0d5dd;border-radius:11px;background:#fff;color:#172033;outline:none}.input:focus,select:focus,textarea:focus{border-color:#60a5fa;box-shadow:0 0 0 3px #2563eb14}.field{margin-bottom:10px}.primary,.secondary,.danger,.ghost{border:0;border-radius:11px;padding:11px 14px;font-weight:800}.primary{background:var(--blue);color:#fff}.primary:hover{background:var(--blue2)}.secondary{background:#eaf2ff;color:#1d4ed8}.ghost{background:#f2f4f7;color:#344054}.danger{background:#fee2e2;color:#b42318}.full{width:100%}.row-actions{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:12px}.stat{padding:13px}.stat .k{font-size:12px;color:var(--muted);font-weight:700}.stat .v{font-size:22px;font-weight:900;margin-top:3px}.stat .hint{font-size:11px;color:#667085;margin-top:2px}.positive{color:#15803d}.negative{color:#b91c1c}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:13px}.table{width:100%;border-collapse:collapse;min-width:650px;background:#fff}.table th,.table td{padding:10px 9px;border-bottom:1px solid #eef0f3;text-align:left;font-size:13px;vertical-align:middle}.table th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#667085;background:#f8fafc}.table tr:last-child td{border-bottom:0}.num{text-align:right!important;white-space:nowrap}.mini{width:82px!important;padding:8px!important;margin:0}.qtybox{display:flex;align-items:center;gap:5px}.qtybtn{width:30px;height:30px;border:1px solid #d0d5dd;border-radius:8px;background:#fff;font-weight:900}.check{width:19px;height:19px;accent-color:var(--blue)}.checked-row{opacity:.68}.checked-row .item-name{text-decoration:line-through}.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 8px;background:#f2f4f7;color:#475467;font-size:11px;font-weight:800}.pill.blue{background:#eaf2ff;color:#1d4ed8}.pill.green{background:#dcfce7;color:#166534}.pill.orange{background:#ffedd5;color:#9a3412}.empty{text-align:center;padding:28px 12px;color:#667085}.empty strong{display:block;color:#344054;margin-bottom:4px}.notice{padding:11px 12px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;font-size:13px;margin-bottom:12px}.list-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.list-card{padding:13px;border:1px solid var(--border);border-radius:13px;background:#fff;margin:8px 0}.list-card.active{border-color:#60a5fa;box-shadow:0 0 0 3px #2563eb10}.list-card h4{margin:0 0 4px}.progress{height:7px;background:#eef2f6;border-radius:999px;overflow:hidden;margin:9px 0}.progress>span{display:block;height:100%;background:#2563eb;border-radius:999px}.catalog-grid{display:grid;grid-template-columns:1fr;gap:8px}.catalog-item{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fff}.catalog-item .grow{flex:1}.catalog-item b{display:block}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar>*{flex:1;min-width:130px}.totalbar{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:#172033;color:#fff;border-radius:14px;margin:12px 0}.totalbar b{font-size:21px}.monthnav{display:flex;gap:8px;align-items:center}.monthnav button{width:38px;height:38px;border:1px solid var(--border);border-radius:10px;background:#fff}.monthnav select{flex:1;margin:0}.chartbar{display:flex;align-items:end;gap:7px;height:105px;padding:10px 5px 0}.bar{flex:1;min-width:10px;background:#93c5fd;border-radius:7px 7px 2px 2px;position:relative}.bar span{position:absolute;bottom:0;left:50%;transform:translate(-50%,100%);font-size:9px;color:#667085}.footer{text-align:center;color:#98a2b3;font-size:11px;margin-top:22px}
+@media(min-width:620px){.tabs{grid-template-columns:repeat(5,1fr)}.grid2{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(4,1fr)}.catalog-grid{grid-template-columns:1fr 1fr}.app{padding:22px 18px 50px}}
 </style>
 </head>
 <body>
 <main class="app">
-<h1>🧺 Alacena de mi hogar</h1><p class="sub">Control sencillo de productos, compras y gastos.</p>
+<header><div class="brand"><div><h1>🧺 Alacena de mi hogar</h1><p class="sub">Tu centro de control para compras, inventario y gastos.</p></div><span class="badge">C$ · Hogar</span></div></header>
 <nav class="tabs">
-<button class="tab active" data-tab="inv">📦<br>Inventario</button>
-<button class="tab" data-tab="buy">🛒<br>Agregar compra</button>
-<button class="tab" data-tab="list">📝<br>Lista del súper</button>
-<button class="tab" data-tab="exp">💰<br>Gastos del mes</button>
+<button class="tab active" data-tab="home">🏠<br>Resumen</button>
+<button class="tab" data-tab="inv">📦<br>Inventario</button>
+<button class="tab" data-tab="list">🛒<br>Lista del súper</button>
+<button class="tab" data-tab="exp">💰<br>Gastos</button>
+<button class="tab" data-tab="prod">🧾<br>Mis productos</button>
 </nav>
 
-<section id="inv" class="panel active"><h2>Inventario</h2><p class="muted">Lo que tienes actualmente en casa.</p><div id="inventory"></div></section>
+<section id="home" class="panel active">
+<div class="stats">
+<div class="stat"><div class="k">Gasto del mes</div><div class="v" id="dashMonth">C$0.00</div><div class="hint" id="dashCompare">Sin comparación</div></div>
+<div class="stat"><div class="k">En inventario</div><div class="v" id="dashInv">0</div><div class="hint">unidades registradas</div></div>
+<div class="stat"><div class="k">Lista activa</div><div class="v" id="dashList">0</div><div class="hint">pendientes de compra</div></div>
+<div class="stat"><div class="k">Listas guardadas</div><div class="v" id="dashLists">0</div><div class="hint">historial del súper</div></div>
+</div>
+<div class="grid2">
+<div class="card"><div class="section-title"><h3>⚡ Acciones rápidas</h3></div><div class="row-actions"><button class="primary" onclick="newList()">+ Nueva lista</button><button class="secondary" onclick="go('prod')">✓ Elegir productos</button><button class="ghost" onclick="go('exp')">Ver gastos</button></div></div>
+<div class="card"><div class="section-title"><h3>📊 Este mes</h3></div><div id="homeInsight" class="muted">Todavía no hay compras registradas.</div></div>
+</div>
+<div class="card" style="margin-top:12px"><div class="section-title"><h3>🕘 Últimas listas</h3><button class="small-link" onclick="go('list')">Ver todas</button></div><div id="recentLists"></div></div>
+</section>
 
-<section id="buy" class="panel"><h2>Agregar compra</h2>
-<form id="purchase" class="form">
-<label>Producto<input id="name" required placeholder="Ej. arroz"></label>
-<label>Cantidad<input id="qty" type="number" min=".01" step=".01" required placeholder="Ej. 2"></label>
-<label>Precio total (C$)<input id="price" type="number" min="0" step=".01" required placeholder="Ej. 120"></label>
-<label>Categoría<select id="cat"><option>Alimentos</option><option>Bebidas</option><option>Limpieza</option><option>Higiene</option><option>Otros</option></select></label>
-<button class="primary">Guardar compra</button></form></section>
+<section id="inv" class="panel">
+<div class="section-title"><div><h2>📦 Inventario</h2><div class="muted">Lo que tienes actualmente en casa.</div></div><button class="secondary" onclick="go('buy')">+ Compra</button></div>
+<div class="notice">Cuando registres una compra realizada desde una lista, el inventario se actualizará automáticamente.</div>
+<div id="inventory"></div>
+</section>
 
-<section id="list" class="panel"><h2>Lista del súper</h2>
-<form id="shopping" class="form"><input id="needed" required placeholder="¿Qué necesitas comprar?"><button class="primary">Agregar a la lista</button></form>
-<div id="shoppingList"></div></section>
+<section id="list" class="panel">
+<div class="section-title"><div><h2>🛒 Lista del súper</h2><div class="muted">Crea listas, guárdalas y reutilízalas cada quincena.</div></div><button class="primary" onclick="newList()">+ Nueva lista</button></div>
+<div id="listSetup" class="form"></div>
+<div id="activeList"></div>
+<div class="card" style="margin-top:12px"><div class="section-title"><div><h3>📚 Mis listas guardadas</h3><div class="muted">Cada lista conserva su fecha, productos y estado.</div></div></div><div id="savedLists"></div></div>
+</section>
 
-<section id="exp" class="panel"><h2>Gastos del mes</h2><div class="total" id="total">C$0.00</div><div id="expenses"></div></section>
-<p id="msg" class="muted" aria-live="polite"></p>
-<button id="clear" class="smallbtn">Borrar todos los datos</button>
+<section id="exp" class="panel">
+<div class="section-title"><div><h2>💰 Gastos y compras</h2><div class="muted">Consulta cuánto gastaste y compara meses.</div></div><button class="secondary" onclick="showManualPurchase()">+ Registrar compra</button></div>
+<div id="manualPurchase" class="form" style="display:none"></div>
+<div class="card"><div class="monthnav"><button onclick="changeMonth(-1)">‹</button><select id="monthFilter" onchange="renderExpenses()"></select><button onclick="changeMonth(1)">›</button></div><div class="stats" style="margin-top:12px"><div class="stat"><div class="k">Total</div><div class="v" id="monthTotal">C$0.00</div></div><div class="stat"><div class="k">Compras</div><div class="v" id="monthCount">0</div></div><div class="stat"><div class="k">Promedio</div><div class="v" id="monthAvg">C$0.00</div></div><div class="stat"><div class="k">Vs. mes anterior</div><div class="v" id="monthDiff">—</div></div></div><div id="categorySummary"></div><div id="expenses"></div></div>
+</section>
+
+<section id="prod" class="panel">
+<div class="section-title"><div><h2>🧾 Mis productos</h2><div class="muted">Tu catálogo permanente. Selecciona con ✓ lo que quieras llevar a la lista.</div></div><button class="primary" onclick="showProductForm()">+ Producto</button></div>
+<div class="notice">Estos productos no se borran al marcar ✓. Solo se agregan a la lista activa, para que puedas reutilizar tu lista habitual.</div>
+<div id="productForm" class="form" style="display:none"></div>
+<div class="toolbar"><input class="input" id="catalogSearch" placeholder="Buscar producto…" oninput="renderCatalog()"><select class="input" id="catalogCat" onchange="renderCatalog()"><option value="">Todas las categorías</option><option>Alimentos</option><option>Bebidas</option><option>Limpieza</option><option>Higiene</option><option>Otros</option></select></div>
+<div id="catalog" style="margin-top:10px"></div>
+</section>
+
+<section id="buy" class="panel">
+<div class="section-title"><div><h2>➕ Registrar compra</h2><div class="muted">Guarda cantidad, precio unitario y total.</div></div></div>
+<div class="form" id="purchaseForm"></div>
+</section>
+<p id="msg" class="muted" aria-live="polite"></p><div class="footer">Tus datos se guardan en este dispositivo. No necesitas internet para consultar lo que ya guardaste.</div>
 </main>
 <script>
-const KEY="alacena_hogar_v1";let d=JSON.parse(localStorage.getItem(KEY)||'{"inventory":[],"purchases":[],"shopping":[]}');
-const $=s=>document.querySelector(s), save=()=>localStorage.setItem(KEY,JSON.stringify(d));
-const money=n=>"C$"+Number(n).toLocaleString("es-NI",{minimumFractionDigits:2,maximumFractionDigits:2});
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function render(){
- $("#inventory").innerHTML=d.inventory.length?d.inventory.map((x,i)=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.cat)} · ${x.qty} unidades</div></div><button class="smallbtn" onclick="useOne(${i})">Usar 1</button></div>`).join(""):'<div class="empty">No hay productos. Agrega una compra.</div>';
- $("#shoppingList").innerHTML=d.shopping.length?d.shopping.map((x,i)=>`<div class="row"><label><input type="checkbox" onchange="done(${i})"> ${esc(x)}</label><button class="smallbtn" onclick="delItem(${i})">Eliminar</button></div>`).join(""):'<div class="empty">Tu lista está vacía.</div>';
- const now=new Date(), m=now.getMonth(),y=now.getFullYear(), ps=d.purchases.filter(p=>{let x=new Date(p.date);return x.getMonth()==m&&x.getFullYear()==y});
- $("#total").textContent=money(ps.reduce((a,p)=>a+p.price,0));
- $("#expenses").innerHTML=ps.length?ps.slice().reverse().map(p=>`<div class="row"><div><b>${esc(p.name)}</b><div class="muted">${p.qty} unidades · ${esc(p.cat)}</div></div><b>${money(p.price)}</b></div>`).join(""):'<div class="empty">No hay compras registradas este mes.</div>';
+const KEY="alacena_hogar_v1";
+const old=JSON.parse(localStorage.getItem(KEY)||'null');
+let d=old&&old.inventory&&old.purchases?old:{inventory:[],purchases:[],shopping:[]};
+function normalize(){
+ d.inventory=(d.inventory||[]).map(x=>({...x,qty:Number(x.qty)||0}));
+ d.purchases=(d.purchases||[]).map(p=>({id:p.id||uid(),name:p.name||"Producto",qty:Number(p.qty)||1,unitPrice:p.unitPrice!=null?Number(p.unitPrice):(Number(p.price)||0)/(Number(p.qty)||1),price:Number(p.price)||0,cat:p.cat||"Otros",date:p.date||new Date().toISOString()}));
+ if(!Array.isArray(d.shoppingLists)){
+   const items=(d.shopping||[]).map(x=>({id:uid(),name:String(x),qty:1,unitPrice:0,checked:false}));
+   d.shoppingLists=items.length?[{id:uid(),name:"Lista inicial",date:new Date().toISOString(),items}]:[];
+ }
+ d.catalog=Array.isArray(d.catalog)?d.catalog:defaultCatalog();
+ d.activeListId=d.activeListId||null;
+ delete d.shopping;
+ save();
 }
-function useOne(i){d.inventory[i].qty=Math.max(0,d.inventory[i].qty-1);save();render()}
-function done(i){d.shopping.splice(i,1);save();render()}
-function delItem(i){d.shopping.splice(i,1);save();render()}
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("#"+b.dataset.tab).classList.add("active")});
-$("#purchase").onsubmit=e=>{e.preventDefault();let name=$("#name").value.trim(),qty=+$("#qty").value,price=+$("#price").value,cat=$("#cat").value;let x=d.inventory.find(a=>a.name.toLowerCase()==name.toLowerCase());if(x){x.qty+=qty;x.cat=cat}else d.inventory.push({name,qty,cat});d.purchases.push({name,qty,price,cat,date:new Date().toISOString()});save();e.target.reset();render();msg("Compra guardada ✓")};
-$("#shopping").onsubmit=e=>{e.preventDefault();d.shopping.push($("#needed").value.trim());save();e.target.reset();render();msg("Agregado ✓")};
-$("#clear").onclick=()=>{if(confirm("¿Borrar todo?")){d={inventory:[],purchases:[],shopping:[]};save();render()}};
-function msg(t){$("#msg").textContent=t;setTimeout(()=>$("#msg").textContent="",1600)}
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
-render();
+function defaultCatalog(){return [
+ ["Arroz","Alimentos",1,0],["Frijoles","Alimentos",1,0],["Azúcar","Alimentos",1,0],["Aceite","Alimentos",1,0],["Huevos","Alimentos",1,0],["Leche","Bebidas",1,0],["Café","Bebidas",1,0],["Pan","Alimentos",1,0],["Pollo","Alimentos",1,0],["Carne","Alimentos",1,0],["Pasta","Alimentos",1,0],["Gaseosa","Bebidas",1,0],["Agua","Bebidas",1,0],["Detergente","Limpieza",1,0],["Jabón para lavar","Limpieza",1,0],["Papel higiénico","Higiene",1,0],["Pasta dental","Higiene",1,0],["Jabón de baño","Higiene",1,0]
+].map(x=>({id:uid(),name:x[0],cat:x[1],defaultQty:x[2],unitPrice:x[3]}))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function save(){localStorage.setItem(KEY,JSON.stringify(d))}
+normalize();
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const money=n=>"C$"+Number(n||0).toLocaleString("es-NI",{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dateFmt=s=>new Date(s).toLocaleDateString("es-NI",{day:"2-digit",month:"2-digit",year:"numeric"});
+function go(id){$$('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));$$('.panel').forEach(x=>x.classList.toggle('active',x.id===id));window.scrollTo({top:0,behavior:'smooth'});render()}
+$$('.tab').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function msg(t){$("#msg").textContent=t;setTimeout(()=>$("#msg").textContent="",1800)}
+function currentList(){return d.shoppingLists.find(x=>x.id===d.activeListId)||d.shoppingLists[0]||null}
+function newList(){const id=uid();d.shoppingLists.unshift({id,name:"Lista quincenal",date:new Date().toISOString(),items:[]});d.activeListId=id;save();go('list');setTimeout(()=>{$('#listName')?.focus()},100)}
+function editListMeta(){const l=currentList();if(!l)return;const name=$('#listName').value.trim()||'Lista del súper';const date=$('#listDate').value||new Date().toISOString().slice(0,10);l.name=name;l.date=new Date(date+'T12:00:00').toISOString();save();render();msg('Lista guardada ✓')}
+function addCatalogToList(id){let l=currentList();if(!l){newList();l=currentList()}const p=d.catalog.find(x=>x.id===id);if(!p)return;const found=l.items.find(x=>x.productId===id);if(found){found.qty+=Number(p.defaultQty)||1}else l.items.push({id:uid(),productId:id,name:p.name,qty:Number(p.defaultQty)||1,unitPrice:Number(p.unitPrice)||0,checked:false});d.activeListId=l.id;save();render();msg('Agregado a la lista ✓')}
+function toggleCatalog(id,checked){if(checked)addCatalogToList(id)}
+function updateItem(id,field,value){const l=currentList();if(!l)return;const x=l.items.find(i=>i.id===id);if(!x)return;if(field==='qty')x.qty=Math.max(.01,Number(value)||1);if(field==='unitPrice')x.unitPrice=Math.max(0,Number(value)||0);save();render()}
+function toggleItem(id){const l=currentList();const x=l?.items.find(i=>i.id===id);if(!x)return;x.checked=!x.checked;save();render()}
+function removeItem(id){const l=currentList();if(!l)return;l.items=l.items.filter(i=>i.id!==id);save();render();msg('Producto eliminado de esta lista')}
+function deleteList(id){if(!confirm('¿Eliminar esta lista guardada?'))return;d.shoppingLists=d.shoppingLists.filter(x=>x.id!==id);if(d.activeListId===id)d.activeListId=d.shoppingLists[0]?.id||null;save();render();msg('Lista eliminada')}
+function selectList(id){d.activeListId=id;save();render()}
+function listTotal(l,onlyChecked=false){return (l?.items||[]).filter(x=>!onlyChecked||x.checked).reduce((s,x)=>s+(Number(x.qty)||0)*(Number(x.unitPrice)||0),0)}
+function progress(l){const n=l?.items?.length||0,c=l?.items?.filter(x=>x.checked).length||0;return n?Math.round(c/n*100):0}
+function renderList(){
+ let l=currentList();
+ if(!l){$('#listSetup').innerHTML='<div class="empty"><strong>Aún no tienes listas.</strong>Crea tu primera lista del súper y quedará guardada para reutilizarla.</div>';$('#activeList').innerHTML='';$('#savedLists').innerHTML='';return}
+ $('#listSetup').innerHTML=`<div class="section-title"><div><h3>✏️ Lista actual</h3><div class="muted">Los cambios se guardan automáticamente.</div></div><span class="pill blue">${progress(l)}% comprado</span></div><div class="grid2"><div class="field"><label class="label">Nombre de la lista</label><input class="input" id="listName" value="${esc(l.name)}" onblur="editListMeta()"></div><div class="field"><label class="label">Fecha</label><input class="input" id="listDate" type="date" value="${new Date(l.date).toISOString().slice(0,10)}" onchange="editListMeta()"></div></div>`;
+ const rows=l.items.length?l.items.map(x=>`<tr class="${x.checked?'checked-row':''}"><td><input class="check" type="checkbox" ${x.checked?'checked':''} onchange="toggleItem('${x.id}')"></td><td><b class="item-name">${esc(x.name)}</b></td><td><div class="qtybox"><button class="qtybtn" onclick="updateItem('${x.id}','qty',${Math.max(.01,(Number(x.qty)||1)-1)})">−</button><input class="input mini num" type="number" min=".01" step=".01" value="${x.qty}" onchange="updateItem('${x.id}','qty',this.value)"><button class="qtybtn" onclick="updateItem('${x.id}','qty',${(Number(x.qty)||1)+1})">+</button></div></td><td class="num"><input class="input mini num" type="number" min="0" step=".01" value="${x.unitPrice}" onchange="updateItem('${x.id}','unitPrice',this.value)" placeholder="0.00"></td><td class="num"><b>${money((Number(x.qty)||0)*(Number(x.unitPrice)||0))}</b></td><td><button class="danger" onclick="removeItem('${x.id}')">×</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">No hay productos. Ve a <b>Mis productos</b> y marca ✓ los que necesitas.</td></tr>';
+ const checkedTotal=listTotal(l,true),total=listTotal(l,false);
+ $('#activeList').innerHTML=`<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>✓</th><th>Producto</th><th>Cantidad</th><th>Precio unidad</th><th class="num">Total</th><th></th></tr></thead><tbody>${rows}</tbody></table></div><div class="totalbar"><div><span class="muted" style="color:#cbd5e1">Estimado · comprado</span><br><b>${money(total)}</b> <span style="color:#cbd5e1">· ${money(checkedTotal)}</span></div><button class="secondary" onclick="registerCheckedPurchase()">Registrar ✓ comprados</button></div></div>`;
+ $('#savedLists').innerHTML=d.shoppingLists.map(x=>`<div class="list-card ${x.id===l.id?'active':''}"><div class="list-head"><div><h4>${esc(x.name)}</h4><div class="muted">${dateFmt(x.date)} · ${x.items.length} productos</div></div><div class="row-actions"><button class="secondary" onclick="selectList('${x.id}')">Abrir</button><button class="danger" onclick="deleteList('${x.id}')">Eliminar</button></div></div><div class="progress"><span style="width:${progress(x)}%"></span></div><div class="muted">${x.items.filter(i=>i.checked).length}/${x.items.length} comprados · ${money(listTotal(x))}</div></div>`).join('')||'<div class="empty">No hay listas guardadas.</div>';
+}
+function registerCheckedPurchase(){const l=currentList();if(!l)return;const items=l.items.filter(x=>x.checked&&!x.registered);if(!items.length){msg('Marca primero los productos comprados ✓');return}const date=new Date(l.date).toISOString();items.forEach(x=>{const total=(Number(x.qty)||0)*(Number(x.unitPrice)||0);d.purchases.push({id:uid(),name:x.name,qty:Number(x.qty)||1,unitPrice:Number(x.unitPrice)||0,price:total,cat:d.catalog.find(p=>p.id===x.productId)?.cat||'Otros',date:new Date().toISOString(),listId:l.id});let inv=d.inventory.find(p=>p.name.toLowerCase()===x.name.toLowerCase());if(inv)inv.qty+=Number(x.qty)||0;else d.inventory.push({id:uid(),name:x.name,qty:Number(x.qty)||0,cat:d.catalog.find(p=>p.id===x.productId)?.cat||'Otros'});x.registered=true});save();render();msg(items.length+' compras registradas ✓')}
+function renderInventory(){const arr=d.inventory.filter(x=>x.qty>0);$('#inventory').innerHTML=arr.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Producto</th><th>Categoría</th><th class="num">Cantidad</th><th></th></tr></thead><tbody>${arr.map((x,i)=>`<tr><td><b>${esc(x.name)}</b></td><td><span class="pill">${esc(x.cat)}</span></td><td class="num">${x.qty}</td><td class="num"><button class="ghost" onclick="useOne('${x.id}')">Usar 1</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="card empty"><strong>Tu inventario está vacío.</strong>Registra una compra para comenzar.</div>'}
+function useOne(id){const x=d.inventory.find(p=>p.id===id);if(x){x.qty=Math.max(0,Number(x.qty)-1);save();render()}}
+function showManualPurchase(){const el=$('#manualPurchase');el.style.display=el.style.display==='none'?'block':'none';if(el.style.display==='block')el.innerHTML=purchaseFormHtml('manual');}
+function purchaseFormHtml(type='main'){return `<div class="section-title"><h3>🧾 Nueva compra</h3><button class="ghost" onclick="${type==='manual'?'showManualPurchase()':'go(\'home\')'}">Cerrar</button></div><div class="grid2"><div class="field"><label class="label">Producto</label><input class="input" id="pName" placeholder="Ej. arroz" required></div><div class="field"><label class="label">Categoría</label><select class="input" id="pCat"><option>Alimentos</option><option>Bebidas</option><option>Limpieza</option><option>Higiene</option><option>Otros</option></select></div><div class="field"><label class="label">Cantidad</label><input class="input" id="pQty" type="number" min=".01" step=".01" value="1" oninput="calcPurchase()"></div><div class="field"><label class="label">Precio por unidad (C$)</label><input class="input" id="pUnit" type="number" min="0" step=".01" value="0" oninput="calcPurchase()"></div></div><div class="totalbar"><div><span style="color:#cbd5e1">Total de la compra</span></div><b id="pTotal">C$0.00</b></div><button class="primary full" onclick="savePurchase('${type}')">Guardar compra</button>`}
+function calcPurchase(){const q=Number($('#pQty')?.value)||0,u=Number($('#pUnit')?.value)||0;if($('#pTotal'))$('#pTotal').textContent=money(q*u)}
+function savePurchase(type){const name=$('#pName').value.trim(),qty=Number($('#pQty').value)||0,unit=Number($('#pUnit').value)||0,cat=$('#pCat').value;if(!name||qty<=0){msg('Completa producto y cantidad');return}const price=qty*unit;d.purchases.push({id:uid(),name,qty,unitPrice:unit,price,cat,date:new Date().toISOString()});let inv=d.inventory.find(x=>x.name.toLowerCase()===name.toLowerCase());if(inv)inv.qty+=qty;else d.inventory.push({id:uid(),name,qty,cat});save();if(type==='manual'){$('#manualPurchase').style.display='none'}else{$('#purchaseForm').innerHTML=purchaseFormHtml('main')}render();msg('Compra guardada ✓')}
+function showProductForm(editId=null){const p=editId?d.catalog.find(x=>x.id===editId):null;const el=$('#productForm');el.style.display='block';el.innerHTML=`<div class="section-title"><h3>${p?'Editar producto':'Nuevo producto'}</h3><button class="ghost" onclick="$('#productForm').style.display='none'">Cerrar</button></div><div class="grid2"><div class="field"><label class="label">Nombre</label><input class="input" id="cName" value="${esc(p?.name||'')}" placeholder="Ej. Arroz"></div><div class="field"><label class="label">Categoría</label><select class="input" id="cCat">${['Alimentos','Bebidas','Limpieza','Higiene','Otros'].map(c=>`<option ${c===(p?.cat||'Alimentos')?'selected':''}>${c}</option>`).join('')}</select></div><div class="field"><label class="label">Cantidad habitual</label><input class="input" id="cQty" type="number" min=".01" step=".01" value="${p?.defaultQty||1}"></div><div class="field"><label class="label">Precio habitual por unidad (C$)</label><input class="input" id="cPrice" type="number" min="0" step=".01" value="${p?.unitPrice||0}"></div></div><button class="primary full" onclick="saveCatalog('${editId||''}')">Guardar producto</button>`}
+function saveCatalog(id){const name=$('#cName').value.trim();if(!name){msg('Escribe el nombre del producto');return}const obj={name,cat:$('#cCat').value,defaultQty:Number($('#cQty').value)||1,unitPrice:Number($('#cPrice').value)||0};if(id){Object.assign(d.catalog.find(x=>x.id===id),obj)}else d.catalog.push({id:uid(),...obj});save();$('#productForm').style.display='none';render();msg('Producto guardado ✓')}
+function deleteCatalog(id){if(!confirm('¿Eliminar este producto de tu catálogo?'))return;d.catalog=d.catalog.filter(x=>x.id!==id);save();render();msg('Producto eliminado')}
+function renderCatalog(){const q=($('#catalogSearch')?.value||'').toLowerCase(),cat=$('#catalogCat')?.value||'';const arr=d.catalog.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!cat||p.cat===cat));$('#catalog').innerHTML=arr.length?`<div class="catalog-grid">${arr.map(p=>`<div class="catalog-item"><input class="check" type="checkbox" onchange="toggleCatalog('${p.id}',this.checked)"><div class="grow"><b>${esc(p.name)}</b><span class="muted">${esc(p.cat)} · ${p.defaultQty} ud · ${money(p.unitPrice)}/ud</span></div><button class="ghost" onclick="showProductForm('${p.id}')">Editar</button><button class="danger" onclick="deleteCatalog('${p.id}')">×</button></div>`).join('')}</div>`:'<div class="empty"><strong>No encontramos productos.</strong>Agrega uno con “+ Producto”.</div>'}
+function fillMonths(){const sel=$('#monthFilter');const now=new Date();let html='';for(let i=0;i<18;i++){const dte=new Date(now.getFullYear(),now.getMonth()-i,1);html+=`<option value="${dte.getFullYear()}-${String(dte.getMonth()+1).padStart(2,'0')}">${dte.toLocaleDateString('es-NI',{month:'long',year:'numeric'})}</option>`}sel.innerHTML=html}
+function monthKey(date){const x=new Date(date);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}`}
+function renderExpenses(){const key=$('#monthFilter').value||monthKey(new Date());const ps=d.purchases.filter(p=>monthKey(p.date)===key);const [yy,mm]=key.split('-').map(Number);const prevKey=monthKey(new Date(yy,mm-2,15));const prev=d.purchases.filter(p=>monthKey(p.date)===prevKey);const total=ps.reduce((s,p)=>s+Number(p.price||0),0),pt=prev.reduce((s,p)=>s+Number(p.price||0),0);$('#monthTotal').textContent=money(total);$('#monthCount').textContent=ps.length;$('#monthAvg').textContent=money(ps.length?total/ps.length:0);const diff=total-pt;$('#monthDiff').textContent=pt?((diff>=0?'+':'')+money(diff)):'—';$('#monthDiff').className='v '+(diff>0?'negative':diff<0?'positive':'');const cats={};ps.forEach(p=>cats[p.cat]=(cats[p.cat]||0)+Number(p.price||0));$('#categorySummary').innerHTML=Object.keys(cats).length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px">${Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<span class="pill blue">${esc(c)} · ${money(v)}</span>`).join('')}</div>`:'';$('#expenses').innerHTML=ps.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Fecha</th><th>Producto</th><th>Categoría</th><th class="num">Cantidad</th><th class="num">Unidad</th><th class="num">Total</th></tr></thead><tbody>${ps.slice().reverse().map(p=>`<tr><td>${dateFmt(p.date)}</td><td><b>${esc(p.name)}</b></td><td>${esc(p.cat)}</td><td class="num">${p.qty}</td><td class="num">${money(p.unitPrice)}</td><td class="num"><b>${money(p.price)}</b></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No hay compras registradas en este mes.</div>'}
+function changeMonth(dir){const sel=$('#monthFilter'),opts=[...sel.options],i=sel.selectedIndex;sel.selectedIndex=Math.min(opts.length-1,Math.max(0,i-dir));renderExpenses()}
+function renderHome(){const nowKey=monthKey(new Date()),ps=d.purchases.filter(p=>monthKey(p.date)===nowKey),total=ps.reduce((s,p)=>s+Number(p.price||0),0);const [y,m]=nowKey.split('-').map(Number),prev=d.purchases.filter(p=>monthKey(p.date)===monthKey(new Date(y,m-2,15))),pt=prev.reduce((s,p)=>s+Number(p.price||0),0);$('#dashMonth').textContent=money(total);$('#dashCompare').textContent=pt?((total>pt?'▲ ':'▼ ')+money(Math.abs(total-pt))+' vs. mes anterior'):'Sin mes anterior';$('#dashInv').textContent=d.inventory.reduce((s,x)=>s+Number(x.qty||0),0);const l=currentList();$('#dashList').textContent=l?l.items.filter(x=>!x.checked).length:0;$('#dashLists').textContent=d.shoppingLists.length;$('#homeInsight').innerHTML=ps.length?`Este mes llevas <b>${ps.length} compras</b> por <b>${money(total)}</b>. ${total>pt&&pt?'Estás gastando más que el mes anterior.':'Puedes usar las listas guardadas para comparar tus compras.'}`:'Todavía no hay compras registradas este mes. Puedes empezar desde “Lista del súper” o “Registrar compra”.';const recent=d.shoppingLists.slice(0,3);$('#recentLists').innerHTML=recent.length?recent.map(x=>`<div class="list-card"><div class="list-head"><div><b>${esc(x.name)}</b><div class="muted">${dateFmt(x.date)} · ${x.items.length} productos · ${money(listTotal(x))}</div></div><button class="secondary" onclick="selectList('${x.id}');go('list')">Abrir</button></div></div>`).join(''):'<div class="empty">Aún no tienes listas guardadas.</div>'}
+function renderPurchasePanel(){if($('#purchaseForm'))$('#purchaseForm').innerHTML=purchaseFormHtml('main')}
+function render(){renderHome();renderInventory();renderList();renderCatalog();renderExpenses();renderPurchasePanel()}
+fillMonths();render();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body></html>
